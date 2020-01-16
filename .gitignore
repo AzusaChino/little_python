@@ -1,2 +1,7 @@
+#file
+*.iml
+**/.gitignore
 
-./.idea
+#folder
+.idea
+**/.idea

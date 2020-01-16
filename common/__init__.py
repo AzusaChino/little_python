@@ -1,7 +1,7 @@
 import pymysql
 
 
-class db(object):
+class db:
 
     def __init__(self):
         self.db = pymysql.Connect(host='localhost', port=3306, user='root', passwd='azusa520', db='chino',
