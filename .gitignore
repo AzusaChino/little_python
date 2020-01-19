@@ -1,7 +1,0 @@
-#file
-*.iml
-**/.gitignore
-
-#folder
-.idea
-**/.idea
