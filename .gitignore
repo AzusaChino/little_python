@@ -1,7 +1,4 @@
-#file
-*.iml
-**/.gitignore
-
-#folder
-.idea
+# Created by .ignore support plugin (hsz.mobi)
+.idea/
 **/.idea
+*.iml
