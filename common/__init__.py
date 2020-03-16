@@ -1,23 +1,21 @@
 import pymysql
 
 
-class db:
+class Mysql:
 
     def __init__(self):
-        self.db = pymysql.Connect(host='localhost', port=3306, user='root', passwd='azusa520', db='chino',
-                                  charset='utf8')
-        self.cursor = self.db.cursor()
+        self.conn = pymysql.connect(host='localhost', port=3306, user='root',
+                                    password='azusa520', db='chino', charset='utf8mb4')
+        self.cursor = self.conn.cursor()
 
     def execute(self, sql):
-        try:
-            # 执行语句
-            self.cursor.execute(sql)
-            # 提交到数据库
-            self.db.commit()
-        except:
-            self.db.rollback()
-            print("error happened")
+        with self.cursor as cur:
+            cur.execute(sql)
+        self.conn.commit()
 
+    def close(self):
+        self.cursor.close()
+        self.conn.close()
 
 headers = [
     "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36",

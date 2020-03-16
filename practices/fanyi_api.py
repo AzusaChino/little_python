@@ -3,9 +3,10 @@ from tkinter import *
 
 import requests
 from bs4 import BeautifulSoup
-from spider import my_headers
 
-res = requests.get("http://fanyi.baidu.com", headers={'user-agent': random.choice(my_headers.my_headers)})
+from common import headers
+
+res = requests.get("http://fanyi.baidu.com", headers={'user-agent': random.choice(headers)})
 soup = BeautifulSoup(res.text, 'lxml')
 
 

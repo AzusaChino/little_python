@@ -4,14 +4,15 @@ import time
 import pymysql
 import requests
 from bs4 import BeautifulSoup
-from spider import my_headers
+
+from common import headers
 
 
 class seg(object):
 
     def __init__(self):
         self.base_url = "https://segmentfault.com"
-        self.headers = my_headers.my_headers
+        self.headers = headers
         self.articles = []
 
     def get_content(self):
