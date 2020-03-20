@@ -1,0 +1,12 @@
+POST http://localhost:9090/create
+Content-Type: application/json
+
+{
+  "body": "watermelon"
+}
+
+###
+GET http://localhost:9090/hello
+Content-Type: application/json
+
+###

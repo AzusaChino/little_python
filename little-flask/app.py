@@ -1,12 +1,6 @@
-from flask import Flask
+import src
 
-app = Flask(__name__)
-
-
-@app.route('/')
-def hello_world():
-    return 'Hello World!'
-
+app = src.create_app()
 
 if __name__ == '__main__':
-    app.run()
+    app.run('localhost', '9090')
