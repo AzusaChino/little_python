@@ -2,11 +2,10 @@
 import random
 import time
 
-import pymysql
 import requests
 from bs4 import BeautifulSoup
 
-from common import headers
+from common import headers, Mysql
 
 
 class downloader(object):
@@ -47,35 +46,18 @@ class downloader(object):
                 self.info.append({'user': user, 'title': title, 'context': ctx, 'tab': tab})
 
 
-class db(object):
-
-    def __init__(self):
-        self.db = pymysql.Connect(host='localhost', port=3306, user='root', passwd='azusa520', db='chino',
-                                  charset='utf8')
-        self.cursor = self.db.cursor()
-
-    def create_sql(self, user, title, context='占位符', tab=' '):
-        day = time.strftime('%Y-%m-%d', time.localtime(time.time()))
-        return """insert into v2ex(user, title, context, tab, day) values ('%s','%s','%s','%s','%s')""" % (
-            user, title, context, tab, day)
-
-    def execute(self, sql):
-        try:
-            # 执行语句
-            self.cursor.execute(sql)
-            # 提交到数据库
-            self.db.commit()
-        except:
-            self.db.rollback()
-            print("error happened")
+def create_sql(user, title, context='占位符', tab=' '):
+    create_time = time.strftime('%Y-%m-%d', time.localtime(time.time()))
+    return 'insert into v2ex(user, title, context, tab, create_time) values ({},{},{},{},{})' \
+        .format(user, title, context, tab, create_time)
 
 
 if __name__ == '__main__':
     d = downloader()
-    db = db()
+    db = Mysql()
     d.get_tabs()
     d.get_info()
     info = d.info
     for i in info:
-        sql = db.create_sql(i['user'], i['title'], context=i['context'], tab=i['tab'])
+        sql = create_sql(i['user'], i['title'], context=i['context'], tab=i['tab'])
         db.execute(sql)

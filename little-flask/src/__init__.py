@@ -1,9 +1,8 @@
 import os
 import random
 
+from db import Sqlite3
 from flask import Flask
-
-import db as Sqlite
 
 
 def create_app(config=None):
@@ -28,9 +27,9 @@ def create_app(config=None):
 
     @app.route('/create', methods=["POST"])
     def create(body):
-        db = Sqlite.Db()
-        db.execute("create table test(id int auto_increment, value varchar(100))")
-        db.execute("insert into test values(%d, %s)".format(random.randint, body))
+        sql_lite = Sqlite3()
+        sql_lite.execute("create table test(id int auto_increment, value varchar(100))")
+        sql_lite.execute("insert into test values(%d, %s)".format(random.randint, body))
         return 'execute success'
 
     return app

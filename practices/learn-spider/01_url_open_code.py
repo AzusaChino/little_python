@@ -2,7 +2,7 @@ from urllib import request
 
 
 def load_data() -> None:
-    url = 'https://baidu.com'
+    url = 'http://www.baidu.com'
     res = request.urlopen(url)
     print(res)
 

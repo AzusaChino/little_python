@@ -7,14 +7,13 @@ def decorate(fn):
 
 def _decorate(cb):
     def _(x, y):
-        return x + y
-
+        return cb(x, y)
     return _
 
 
 @_decorate
 def greet(name, a):
-    return name
+    return name + a
 
 
 if __name__ == '__main__':

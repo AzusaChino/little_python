@@ -1,5 +1,5 @@
-from urllib import request, parse
 import string
+from urllib import request, parse
 
 
 def get_method_params() -> None:
@@ -19,7 +19,7 @@ def get_method_params() -> None:
     data = res.read().decode()
     print(data)
     # 保存到本地
-    with open("02-encode.html", "w", encoding="utf-8")as f:
+    with open("02-encode.html", "wb", encoding="utf-8") as f:
         f.write(data)
     # UnicodeEncodeError: 'ascii' codec can't encode
     # characters in position 10-11: ordinal not in range(128)

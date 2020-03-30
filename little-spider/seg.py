@@ -1,11 +1,10 @@
 import random
 import time
 
-import pymysql
 import requests
 from bs4 import BeautifulSoup
 
-from common import headers
+from common import headers, Mysql
 
 
 class seg(object):
@@ -32,36 +31,18 @@ class seg(object):
                     i_content += i_p.text + '\r\n'
             self.articles.append({'title': i_title, 'context': i_context,
                                   'link': self.base_url + i_link, 'content': i_content})
+        return self.articles
 
 
 def create_sql(title, context=' ', content=' '):
     date = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(time.time()))
-    return """insert into segment(title, context, content, date) values ('%s','%s','%s','%s') """ % (
-        title, context, content, date)
-
-
-class db(object):
-
-    def __init__(self):
-        self.db = pymysql.Connect(host='localhost', port=3306, user='root', passwd='azusa520', db='chino',
-                                  charset='utf8')
-        self.cursor = self.db.cursor()
-
-    def execute(self, sql):
-        try:
-            # 执行语句
-            self.cursor.execute(sql)
-            # 提交到数据库
-            self.db.commit()
-        except:
-            self.db.rollback()
-            print("error happened")
+    return 'insert into segment(id, title, context, content, create_time) values ({},{},{},{})' \
+        .format(title, context, content, date)
 
 
 if __name__ == '__main__':
     s = seg()
-    db = db()
-    s.get_content()
-    for article in s.articles:
+    db = Mysql()
+    for article in s.get_content():
         sql = create_sql(article['title'], article['context'], article['content'])
         db.execute(sql)

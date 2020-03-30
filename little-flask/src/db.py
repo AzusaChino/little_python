@@ -1,7 +1,8 @@
 import sqlite3
+from sqlite3 import DatabaseError
 
 
-class Db:
+class Sqlite3:
     conn = None
     cur = None
 
@@ -14,14 +15,14 @@ class Db:
         try:
             self.cur.execute(sql, params)
             res = self.cur.fetchall()
-        except:
+        except DatabaseError:
             print("error happened when query")
         return res
 
     def execute(self, sql, params=None):
         try:
             self.cur.execute(sql, params)
-        except:
+        except DatabaseError:
             print("error happened when execute")
             self.conn.rollback()
         self.conn.commit()
