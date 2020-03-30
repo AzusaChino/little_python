@@ -21,4 +21,20 @@
    - 目标明确
    - 对用户需求很精准
    - 返回内容固定
-   
+
+## 传参
+
+### GET&POST
+
+- 汉字报错：解释器ascii没有汉字，需要转码
+  - urllib.parse.quote(safe='string.printable')
+- 字典传参
+  - urllib.parse.urlencode()
+
+### User-Agent
+
+模拟真实的浏览器器发送请求
+
+### IP代理
+
+PROXY_HANDLER

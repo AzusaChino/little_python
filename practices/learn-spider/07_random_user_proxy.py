@@ -17,5 +17,5 @@ def proxy_user(url: str) -> None:
 
 
 if __name__ == '__main__':
-    url = 'https://www.baidu.com'
-    proxy_user(url)
+    baidu = 'https://www.baidu.com'
+    proxy_user(baidu)
