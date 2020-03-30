@@ -1,5 +1,6 @@
 import pymysql
 from pymysql import MySQLError
+import pymongo
 
 
 class Mysql:
@@ -26,6 +27,20 @@ class Mysql:
     def close(self):
         self.cursor.close()
         self.conn.close()
+
+
+class Mongo:
+    def __init__(self, host, port, dbname, collection):
+        self.client = pymongo.MongoClient(host=host, port=port)
+        self.db = self.client[dbname]
+        self.collection = self.db[collection]
+
+    def save_data(self, data):
+        self.collection.insert(data)
+        print('保存成功!')
+
+    def close(self):
+        self.client.close()
 
 
 headers = [
