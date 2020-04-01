@@ -13,8 +13,18 @@ def create_proxy_handler():
 
 
 def create_proxy_handler2():
-    pass
+    username = 'abc'
+    password = '123'
+    proxy_host = '123.158.63.130:8080'
+
+    password_manager = request.HTTPPasswordMgrWithDefaultRealm()
+    password_manager.add_password('', uri=proxy_host, user=username, passwd=password)
+    handle_auth_proxy = request.ProxyBasicAuthHandler(password_manager)
+    opener_auth = request.build_opener(handle_auth_proxy)
+
+    response = opener_auth.open('http://www.baidu.com')
+    print(response.read())
 
 
 if __name__ == '__main__':
-    create_proxy_handler()
+    create_proxy_handler2()
