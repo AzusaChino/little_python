@@ -12,5 +12,9 @@ def create_proxy_handler():
     print(res)
 
 
+def create_proxy_handler2():
+    pass
+
+
 if __name__ == '__main__':
     create_proxy_handler()

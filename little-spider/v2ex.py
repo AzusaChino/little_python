@@ -23,9 +23,11 @@ class downloader(object):
         a = tabs[0].find_all('a')
         for each in a:
             self.tab_urls.append(self.url + each.get('href'))
+        return self.tab_urls
 
-    def get_info(self):
-        for url in self.tab_urls:
+    def get_info(self, tab_urls):
+        for url in tab_urls:
+            time.sleep(2)
             r = requests.get(url=url, headers={'user-agent': random.choice(self.headers)})
             soup = BeautifulSoup(r.text, 'lxml')
             cells = soup.find_all('div', class_='cell item')
@@ -44,6 +46,7 @@ class downloader(object):
                     else:
                         ctx = content.text
                 self.info.append({'user': user, 'title': title, 'context': ctx, 'tab': tab})
+        return self.info
 
 
 def create_sql(user, title, context='占位符', tab=' '):
@@ -55,9 +58,6 @@ def create_sql(user, title, context='占位符', tab=' '):
 if __name__ == '__main__':
     d = downloader()
     db = Mysql()
-    d.get_tabs()
-    d.get_info()
-    info = d.info
-    for i in info:
+    for i in d.get_info(d.get_tabs()):
         sql = create_sql(i['user'], i['title'], context=i['context'], tab=i['tab'])
         db.execute(sql)

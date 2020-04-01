@@ -1,25 +1,35 @@
-import pymysql
-from pymysql import MySQLError
+import sqlite3
+from sqlite3 import DatabaseError
+
 import pymongo
+import pymysql
+from pymongo.errors import PyMongoError
+from pymysql import MySQLError
 
 
 class Mysql:
 
-    def __init__(self):
-        self.conn = pymysql.connect(host='localhost', port=3306, user='root',
-                                    password='azusa520', db='chino', charset='utf8mb4')
+    def __init__(self, host='127.0.0.1', port=3306,
+                 user='root', password='azusa520',
+                 database='chino', charset='utf8mb4'):
+        self.conn = pymysql.connect(host=host, port=port, user=user,
+                                    password=password, database=database, charset=charset)
         self.cursor = self.conn.cursor()
 
     def query(self, sql, params=None):
+        # sql = "SELECT `id`, `password` FROM `users` WHERE `email`=%s"
+        # cursor.execute(sql, ('webmaster@python.org',))
         res = None
         try:
             self.cursor.execute(sql, params)
             res = self.cursor.fetchall()
-        except MySQLError:
-            print("error happened when query")
+        except MySQLError as e:
+            print("发生了异常", e)
         return res
 
     def execute(self, sql, params=None):
+        # sql = "INSERT INTO `users` (`email`, `password`) VALUES (%s, %s)"
+        # cursor.execute(sql, ('webmaster@python.org', 'very-secret'))
         with self.cursor as cur:
             cur.execute(sql, params)
         self.conn.commit()
@@ -36,11 +46,43 @@ class Mongo:
         self.collection = self.db[collection]
 
     def save_data(self, data):
-        self.collection.insert(data)
+        try:
+            self.collection.insert(data)
+        except PyMongoError as e:
+            print('发生了异常', e)
         print('保存成功!')
 
     def close(self):
         self.client.close()
+
+
+class Sqlite:
+
+    def __init__(self, location='./database.db'):
+        self.conn = sqlite3.connect(location)
+        self.cur = self.conn.cursor()
+
+    def query(self, sql, params=None):
+        res = None
+        try:
+            self.cur.execute(sql, params)
+            res = self.cur.fetchall()
+        except DatabaseError as e:
+            print("error happened when query", e)
+        return res
+
+    def execute(self, sql, params=None):
+        try:
+            self.cur.execute(sql, params)
+        except DatabaseError as e:
+            print("error happened when execute", e)
+            self.conn.rollback()
+        self.conn.commit()
+        print("execute succeed, sql: " + sql)
+
+    def close(self):
+        self.cur.close()
+        self.conn.close()
 
 
 headers = [

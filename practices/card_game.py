@@ -25,3 +25,7 @@ class Card:
             face_num = 13
         else:
             face_num = int(self.rank)
+
+
+if __name__ == '__main__':
+    c = Card()

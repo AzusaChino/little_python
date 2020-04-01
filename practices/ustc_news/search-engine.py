@@ -1,43 +1,11 @@
 import random
 import re
-import sqlite3
 from collections import deque
 
 import requests
 from bs4 import BeautifulSoup
 
-from common import headers
-
-
-class db:
-    conn = None
-    cur = None
-
-    def __init__(self):
-        self.conn = sqlite3.connect('./database.db')
-        self.cur = self.conn.cursor()
-
-    def query(self, sql, params=None):
-        res = None
-        try:
-            self.cur.execute(sql, params)
-            res = self.cur.fetchall()
-        except:
-            print("error happened when query")
-        return res
-
-    def execute(self, sql, params=None):
-        try:
-            self.cur.execute(sql, params)
-        except:
-            print("error happened when execute")
-            self.conn.rollback()
-        self.conn.commit()
-        print("execute succeed, sql: " + sql)
-
-    def close(self):
-        self.cur.close()
-        self.conn.close()
+from common import headers, Sqlite
 
 
 class spider:
@@ -47,15 +15,15 @@ class spider:
     count = 0
 
     def __init__(self):
-        pass
+        self.db = Sqlite()
 
     def fetch_urls(self):
         res = None
         try:
             res = requests.get(self.base_url, headers={'user-agent': random.choice(headers)})
             res.encoding = 'utf-8'
-        except:
-            print("error when requests.get()")
+        except Exception as e:
+            print("error when requests.get()", e)
         soup = BeautifulSoup(res.text, 'lxml')
         news_div = soup.find('div', id='wp_news_w1')
         a_s = news_div.find_all('a')
@@ -74,8 +42,8 @@ class spider:
             try:
                 res = requests.get(url, headers={'user-agent': random.choice(headers)})
                 res.encoding = 'utf-8'
-            except:
-                print("error when requests.get()")
+            except Exception as e:
+                print("error when requests.get()", e)
 
 
 def reg(url):
