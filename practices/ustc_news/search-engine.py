@@ -8,7 +8,7 @@ from bs4 import BeautifulSoup
 from common import headers, Sqlite
 
 
-class spider:
+class Spider:
     base_url = 'https://www.ustc.edu.cn/'
     un_visited = deque()
     visited = set()
@@ -55,5 +55,5 @@ def reg(url):
 
 
 if __name__ == '__main__':
-    s = spider()
+    s = Spider()
     s.fetch_urls()

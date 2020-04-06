@@ -24,7 +24,7 @@ class App:
     def get_pic(self, html):
         soup = self.bs(html, 'html.parser')
         set_name = soup.find('h1', class_='mt-3').text
-        escaped_set_name = str(set_name.split('@')[0]).replace(' ', '')
+        escaped_set_name = str(set_name.split('@')[0]).replace(' ', '').replace(':', '')
         create_dir('stickers/{}'.format(escaped_set_name))
         img_items = soup.find_all('sticker-item')
         item_size = len(img_items)
@@ -44,10 +44,11 @@ def create_dir(dir_name) -> None:
 
 def main():
     app = App()
-    # set_id = input('please input the set_id you want to download: ')
-    set_ids = [360, 1001, 509]
-    for id in set_ids:
-        app.get_pic(app.download_page(str(id)))
+    set_id = input('please input the set_id you want to download: ')
+    app.get_pic(app.download_page(str(set_id)))
+    # set_ids = [360, 1001, 509]
+    # for id in set_ids:
+    #     app.get_pic(app.download_page(str(id)))
 
 
 if __name__ == '__main__':

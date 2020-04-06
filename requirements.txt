@@ -1,0 +1,7 @@
+aiohttp
+
+PyMysql
+pymongo
+requests
+bs4
+jieba
