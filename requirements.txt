@@ -5,3 +5,6 @@ pymongo
 requests
 bs4
 jieba
+werobot
+pandas
+numpy
