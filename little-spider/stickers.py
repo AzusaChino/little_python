@@ -34,7 +34,7 @@ class App:
             print('{}这个集合中共{}个文件, 正在下载第{}个'.format(escaped_set_name, item_size, i + 1))
             with open('stickers/{}/{}'.format(escaped_set_name, img_link.split('/')[-1]), 'wb') as f:
                 f.write(res.content)
-                time.sleep(1)  # 休眠一秒, 减少压力
+            time.sleep(60)  # 休眠一秒, 减少压力
 
 
 def create_dir(dir_name) -> None:
@@ -44,11 +44,12 @@ def create_dir(dir_name) -> None:
 
 def main():
     app = App()
-    set_id = input('please input the set_id you want to download: ')
-    app.get_pic(app.download_page(str(set_id)))
+    # set_id = input('请输入你想下载表情包的id: ')
+    # app.get_pic(app.download_page(str(set_id)))
+    set_ids = [1169, 1155] # 1169 NachoNekoDayo 1155 Umaru
     # set_ids = [360, 1001, 509]
-    # for id in set_ids:
-    #     app.get_pic(app.download_page(str(id)))
+    for id in set_ids:
+        app.get_pic(app.download_page(str(id)))
 
 
 if __name__ == '__main__':
