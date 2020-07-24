@@ -24,7 +24,7 @@ class App:
     def get_pic(self, html):
         soup = self.bs(html, 'html.parser')
         set_name = soup.find('h1', class_='mt-3').text
-        escaped_set_name = str(set_name.split('@')[0]).replace(' ', '').replace(':', '')
+        escaped_set_name = str(set_name.split('@')[0]).replace(r' ', '').replace(r':', '')
         create_dir('stickers/{}'.format(escaped_set_name))
         img_items = soup.find_all('sticker-item')
         item_size = len(img_items)
@@ -34,7 +34,7 @@ class App:
             print('{}这个集合中共{}个文件, 正在下载第{}个'.format(escaped_set_name, item_size, i + 1))
             with open('stickers/{}/{}'.format(escaped_set_name, img_link.split('/')[-1]), 'wb') as f:
                 f.write(res.content)
-            time.sleep(60)  # 休眠一秒, 减少压力
+            time.sleep(30)  # 休眠一秒, 减少压力
 
 
 def create_dir(dir_name) -> None:
