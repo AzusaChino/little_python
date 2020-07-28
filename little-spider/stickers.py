@@ -46,8 +46,9 @@ def main():
     app = App()
     # set_id = input('请输入你想下载表情包的id: ')
     # app.get_pic(app.download_page(str(set_id)))
-    set_ids = [1169, 1155] # 1169 NachoNekoDayo 1155 Umaru
+    # set_ids = [1169, 1155] # 1169 NachoNekoDayo 1155 Umaru
     # set_ids = [360, 1001, 509]
+    set_ids = [1155]
     for id in set_ids:
         app.get_pic(app.download_page(str(id)))
 
