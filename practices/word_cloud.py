@@ -12,7 +12,7 @@ def main():
 
     )
     res = wc.generate(words)
-    res.to_file('../resources/data.png')
+    res.to_file('../datasets/data.png')
 
 
 if __name__ == '__main__':
