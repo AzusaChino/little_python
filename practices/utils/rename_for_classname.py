@@ -6,4 +6,4 @@ def rename(input_str: str):
 
 
 if __name__ == '__main__':
-    rename('Best Time to Buy and Sell Stock with Cooldown')
+    rename(input("please input: "))
