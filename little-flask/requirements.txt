@@ -1,0 +1,6 @@
+flask
+flask_sqlalchemy
+pymysql
+flask_script
+wtforms
+flask_wtf
