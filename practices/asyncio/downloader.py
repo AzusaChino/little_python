@@ -15,7 +15,7 @@ def download(ways):
     event_loop = asyncio.get_event_loop()
     try:
         event_loop.run_until_complete(
-            async_downloader(ways, event_loop, success_files, failure_files)
+            async_downloader(ways, success_files, failure_files)
         )
     finally:
         event_loop.close()
@@ -23,7 +23,11 @@ def download(ways):
     print('-' * 99)
 
 
-async def async_downloader(ways, loop, success_files=set(), failure_files=set()):
+async def async_downloader(ways, success_files=None, failure_files=None):
+    if failure_files is None:
+        failure_files = set()
+    if success_files is None:
+        success_files = set()
     async with aiohttp.ClientSession() as session:
         coroutines = [
             download_file_by_url(url, session=session)

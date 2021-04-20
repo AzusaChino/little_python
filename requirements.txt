@@ -11,3 +11,4 @@ beautifulsoup4
 selenium
 pyquery
 sklearn
+kafka-python
