@@ -12,3 +12,4 @@ selenium
 pyquery
 sklearn
 kafka-python
+rocketmq 

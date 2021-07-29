@@ -3,7 +3,6 @@ from kafka.errors import KafkaError
 from kafka.admin import NewTopic
 
 localHost = "127.0.0.1:9092"
-devHost = "172.31.103.161:9092"
 
 
 class Demo:
@@ -11,7 +10,7 @@ class Demo:
     adminClient = None
 
     def __init__(self):
-        self.producer = KafkaProducer(bootstrap_servers=[devHost])
+        self.producer = KafkaProducer(bootstrap_servers=[localHost])
         if self.producer:
             print("producer init success")
         # self.adminClient = KafkaAdminClient(bootstrap_servers=[localHost])
