@@ -12,4 +12,9 @@ selenium
 pyquery
 sklearn
 kafka-python
-rocketmq 
+rocketmq
+windows-curses
+# https://github.com/pywebio/PyWebIO (web app with python script)
+pywebio
+# https://github.com/brainix/pottery
+pottery

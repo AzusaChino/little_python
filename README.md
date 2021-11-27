@@ -1,10 +1,12 @@
 # little-python
 
-记录Python学习的仓库
+Python Practices
+
+`python -m venv ./venv`
 
 ## little-flask
 
-Flask框架的demo项目
+Flask 框架的 demo 项目
 
 ## little-spider
 
