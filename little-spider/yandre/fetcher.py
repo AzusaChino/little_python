@@ -1,5 +1,6 @@
 import os
 import random
+import sys
 import time
 
 import requests
@@ -38,8 +39,7 @@ class Fetcher(object):
 
     def download_by_daily(self):
         create_dir(self.folder)
-        # TODO fix daily range
-        for i in range(1, 27):
+        for i in range(1, 32):
             url = "https://yande.re/post/popular_by_day?day={}&month={}&year={}".format(
                 i, self.month, self.year
             )
@@ -54,16 +54,19 @@ class Fetcher(object):
         soup = BeautifulSoup(res.text, "html.parser")
         # 找到所有的 show page
         popular = soup.find("ul", id="post-list-posts")
-        images = popular.find_all("a", class_="thumb")
+        if popular:
+            images = popular.find_all("a", class_="thumb")
 
-        # 依次访问热门图片
-        for i in images:
-            fi = str(i["href"]).removeprefix("/post/show/")
-            self.download_by_showid(fi)
-            time.sleep(1)
+            # 依次访问热门图片
+            for i in images:
+                fi = str(i["href"]).removeprefix("/post/show/")
+                self.download_by_showid(fi)
+        else:
+            print("当前页面 {} 尚无数据".format(url))
 
     def download_by_showid(self, fi):
         """
+        根据showid进行下载
         fi: show id
         """
         jpg_name = "{}/{}.jpg".format(self.folder, fi)
@@ -97,6 +100,7 @@ class Fetcher(object):
                 f.write(pd.content)
             print("{}.jpg 下载完成".format(fi))
         else:
+            # TODO 重试机制
             print("{} 未找到下载地址".format(fi))
 
 
@@ -106,5 +110,13 @@ def create_dir(dir_name) -> None:
 
 
 if __name__ == "__main__":
-    f = Fetcher(2022, 8, "E:\\Pictures\\2022")
-    f.download_by_showid(1013676)
+    args = sys.argv[1:]
+    year = 2022
+    month = 8
+    if len(args) == 1:
+        month = args[0]
+    if len(args) == 2:
+        year = args[0]
+        month = args[1]
+    f = Fetcher(year, month, "E:\\Pictures\\2022")
+    f.download_by_daily()
