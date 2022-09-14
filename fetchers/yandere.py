@@ -41,7 +41,7 @@ class YandereFetcher:
                     else:
                         cnt += 1
             fd.close()
-        self.do_download()
+        self.do_download(self.folder)
 
     def save_metadata(self, url, fd) -> bool:
         res = requests.get(url, headers={"user-agent": random.choice(fetchers.headers)})
@@ -54,16 +54,18 @@ class YandereFetcher:
             # 依次访问热门图片
             for i in images:
                 showid = str(i["href"]).removeprefix("/post/show/")
-                fd.write(showid)
+                fd.write("{}\n".format(showid))
             return True
         else:
             print("当前页面 {} 尚无数据".format(url))
             return False
 
-    def do_download(self):
+    def do_download(self, folder):
         fd = open(self.data_path, "r")
-        for i, si in fd.readlines():
-            fetchers.download_by_showid(si)
+        for si in fd.readlines():
+            # clean right `\n`
+            fetchers.download_by_showid(si.rstrip(), folder)
+        fd.close()
 
 
 if __name__ == "__main__":
