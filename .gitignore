@@ -2,3 +2,6 @@
 .idea/
 venv/
 *.iml
+
+# compiled files
+*.pyc

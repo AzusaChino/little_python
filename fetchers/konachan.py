@@ -1,122 +1,84 @@
 import os
 import random
 import sys
-import time
 
 import requests
 from bs4 import BeautifulSoup
 
-headers = [
-    "Mozilla/5.0 (Windows NT 6.3; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.153 Safari/537.36",
-    "Mozilla/5.0 (Windows NT 6.1; WOW64; rv:30.0) Gecko/20100101 Firefox/30.0",
-    "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/537.75.14",
-    "Mozilla/5.0 (compatible; MSIE 10.0; Windows NT 6.2; Win64; x64; Trident/6.0)",
-    "Mozilla/5.0 (Windows; U; Windows NT 5.1; it; rv:1.8.1.11) Gecko/20071127 Firefox/2.0.0.11",
-    "Opera/9.25 (Windows NT 5.1; U; en)",
-    "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1; SV1; .NET CLR 1.1.4322; .NET CLR 2.0.50727)",
-    "Mozilla/5.0 (compatible; Konqueror/3.5; Linux) KHTML/3.5.5 (like Gecko) (Kubuntu)",
-    "Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.8.0.12) Gecko/20070731 Ubuntu/dapper-security Firefox/1.5.0.12",
-    "Lynx/2.8.5rel.1 libwww-FM/2.14 SSL-MM/1.4.1 GNUTLS/1.2.9",
-    "Mozilla/5.0 (X11; Linux i686) AppleWebKit/535.7 (KHTML, like Gecko) Ubuntu/11.04 Chromium/16.0.912.77 Chrome/16.0.912.77 Safari/535.7",
-    "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:10.0) Gecko/20100101 Firefox/10.0 ",
-]
+# 将当前文件夹加入到 py 环境变量
+sys.path.append(os.getcwd())
 
-# Yandre Popular Fetcher
-class Fetcher(object):
-    base_url = "https://yande.re/post/"
-    daily = "popular_by_day"
-    weekly = "popular_by_week"
-    monthly = "popular_by_month"
+import fetchers
 
-    def __init__(self, year=2022, month=8, folder=""):
+
+# Konachan Popular Fetcher
+class KonachanFetcher:
+    base_url = "https://konachan.com/post/"
+
+    def __init__(self, year="2022", month="08", folder=""):
         self.year = year
         self.month = month
         if folder != "":
             self.folder = "{}{}{}-{}".format(folder, os.sep, self.year, self.month)
         else:
             self.folder = "{}-{}".format(self.year, self.month)
-
+        fetchers.create_dir_if_not_exists(self.folder)
+        self.data_path = "{}{}{}".format(self.folder, os.sep, "data.csv")
 
     def download_by_daily(self):
-        create_dir(self.folder)
-        for i in range(1, 32):
-            url = "https://yande.re/post/popular_by_day?day={}&month={}&year={}".format(
-                i, self.month, self.year
-            )
-            self.do_download(url)
+        if not os.path.isfile(self.data_path):
+            fd = open(self.data_path, "a+")
+            for i in range(1, 32):
+                url = self.base_url + "popular_by_day?day={}&month={}&year={}".format(
+                    i, self.month, self.year
+                )
+                cnt = 0
+                while cnt < 10:
+                    if self.save_metadata(url, fd):
+                        break
+                    else:
+                        cnt += 1
+            fd.close()
+            print("完成 showId 采集")
+        self.do_download(self.folder)
 
-    def do_download(self, url):
-        """
-        真正下载的方法
-        """
-        res = requests.get(url, headers={"user-agent": random.choice(headers)})
+    def save_metadata(self, url, fd) -> bool:
+        res = requests.get(url, headers={"user-agent": random.choice(fetchers.headers)})
         res.encoding = "utf-8"
         soup = BeautifulSoup(res.text, "html.parser")
         # 找到所有的 show page
         popular = soup.find("ul", id="post-list-posts")
         if popular:
             images = popular.find_all("a", class_="thumb")
-
             # 依次访问热门图片
             for i in images:
-                fi = str(i["href"]).removeprefix("/post/show/")
-                self.download_by_showid(fi)
+                # sample: https://konachan.com/post/show/347142/aqua_eyes-ass-breasts-chinese_clothes-chinese_dres
+                showid = str(i["href"]).split("/")[3]
+                fd.write("{}\n".format(showid))
+            return True
         else:
             print("当前页面 {} 尚无数据".format(url))
+            return False
 
-    def download_by_showid(self, fi):
-        """
-        根据showid进行下载
-        fi: show id
-        """
-        jpg_name = "{}/{}.jpg".format(self.folder, fi)
-        png_name = "{}/{}.png".format(self.folder, fi)
-        if os.path.exists(jpg_name) or os.path.exists(png_name):
-            print("{} 已存在".format(fi))
-            return
+    def do_download(self, folder):
+        fd = open(self.data_path, "r")
+        for si in fd.readlines():
+            # clean right `\n`
+            fetchers.download_by_showid(si.rstrip(), folder, self.base_url + "show/{}")
+        fd.close()
 
-        u = "https://yande.re/post/show/{}".format(fi)
-        pr = requests.get(u, headers={"user-agent": random.choice(headers)})
-        pr.encoding = "utf-8"
-        sp = BeautifulSoup(pr.text, "html.parser")
-
-        png = sp.find("a", id="png")
-        jpg = sp.find("a", id="highres")
-
-        # 尝试下载PNG
-        if png:
-            pd = requests.get(
-                str(png["href"]), headers={"user-agent": random.choice(headers)}
-            )
-            with open(png_name, "wb") as f:
-                f.write(pd.content)
-            print("{}.png 下载完成".format(fi))
-        # 下载 JPG
-        elif jpg:
-            pd = requests.get(
-                str(jpg["href"]), headers={"user-agent": random.choice(headers)}
-            )
-            with open(jpg_name, "wb") as f:
-                f.write(pd.content)
-            print("{}.jpg 下载完成".format(fi))
-        else:
-            # TODO 重试机制
-            print("{} 未找到下载地址".format(fi))
-
-
-def create_dir(dir_name) -> None:
-    if not os.path.exists(dir_name):
-        os.mkdir(dir_name)
 
 if __name__ == "__main__":
     args = sys.argv[1:]
-    year = 2022
-    month = 8
+    # default param
+    year = "2022"
+    month = "08"
+    # extract target year & month from args
     if len(args) == 1:
         month = args[0]
     if len(args) == 2:
         year = args[0]
         month = args[1]
-    f = Fetcher(year, month, "E:\\Pictures\\2022")
-    f.download_by_daily()
+    target_folder = "E:{}Pictures{}{}{}konachan".format(os.sep, os.sep, year, os.sep)
+    kf = KonachanFetcher(year, month, target_folder)
+    kf.download_by_daily()

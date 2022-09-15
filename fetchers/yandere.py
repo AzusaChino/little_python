@@ -5,6 +5,7 @@ import sys
 import requests
 from bs4 import BeautifulSoup
 
+# 将当前文件夹加入到 py 环境变量
 sys.path.append(os.getcwd())
 
 import fetchers
@@ -13,9 +14,9 @@ import fetchers
 # Yandre Popular Fetcher
 class YandereFetcher:
     base_url = "https://yande.re/post/"
-    daily = "popular_by_day"
-    weekly = "popular_by_week"
-    monthly = "popular_by_month"
+    # daily = "popular_by_day"
+    # weekly = "popular_by_week"
+    # monthly = "popular_by_month"
 
     def __init__(self, year="2022", month="09", folder=""):
         self.year = year
@@ -31,7 +32,7 @@ class YandereFetcher:
         if not os.path.isfile(self.data_path):
             fd = open(self.data_path, "a+")
             for i in range(1, 32):
-                url = "https://yande.re/post/popular_by_day?day={}&month={}&year={}".format(
+                url = self.base_url + "/popular_by_day?day={}&month={}&year={}".format(
                     i, self.month, self.year
                 )
                 cnt = 0
@@ -41,6 +42,7 @@ class YandereFetcher:
                     else:
                         cnt += 1
             fd.close()
+            print("完成 showId 采集")
         self.do_download(self.folder)
 
     def save_metadata(self, url, fd) -> bool:
@@ -64,7 +66,7 @@ class YandereFetcher:
         fd = open(self.data_path, "r")
         for si in fd.readlines():
             # clean right `\n`
-            fetchers.download_by_showid(si.rstrip(), folder)
+            fetchers.download_by_showid(si.rstrip(), folder, self.base_url + "show/{}")
         fd.close()
 
 
