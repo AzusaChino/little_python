@@ -13,7 +13,7 @@ pyquery
 sklearn
 kafka-python
 rocketmq
-windows-curses
+# windows-curses
 # https://github.com/pywebio/PyWebIO (web app with python script)
 pywebio
 # https://github.com/brainix/pottery
